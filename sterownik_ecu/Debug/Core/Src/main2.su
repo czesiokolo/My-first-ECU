@@ -1,6 +1,6 @@
-../Core/Src/main2.c:49:6:setup	8	static
-../Core/Src/main2.c:56:6:loop	16	static
-../Core/Src/main2.c:81:6:ignition_angle_set	16	static
-../Core/Src/main2.c:91:6:HAL_TIM_IC_CaptureCallback	24	static
-../Core/Src/main2.c:146:6:HAL_TIM_PeriodElapsedCallback	16	static
-../Core/Src/main2.c:168:6:HAL_UART_RxCpltCallback	16	static
+../Core/Src/main2.c:50:6:setup	8	static
+../Core/Src/main2.c:57:6:loop	16	static
+../Core/Src/main2.c:82:6:ignition_angle_set	16	static
+../Core/Src/main2.c:92:6:HAL_TIM_IC_CaptureCallback	24	static
+../Core/Src/main2.c:147:6:HAL_TIM_PeriodElapsedCallback	16	static
+../Core/Src/main2.c:169:6:HAL_UART_RxCpltCallback	24	static
