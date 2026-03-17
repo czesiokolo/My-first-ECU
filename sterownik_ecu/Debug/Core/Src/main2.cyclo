@@ -1,0 +1,5 @@
+../Core/Src/main2.c:41:6:setup	1
+../Core/Src/main2.c:48:6:loop	2
+../Core/Src/main2.c:73:6:ignition_angle_set	3
+../Core/Src/main2.c:83:6:HAL_TIM_IC_CaptureCallback	8
+../Core/Src/main2.c:133:6:HAL_TIM_PeriodElapsedCallback	3
