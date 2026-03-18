@@ -44,7 +44,7 @@ extern TIM_HandleTypeDef htim3;
 
 volatile uint16_t ignition_target_angle_cyl1 = 0;
 volatile uint8_t ign_cyl1 = 0;
-uint8_t pulse_time = 100;
+uint16_t pulse_time = 2000;
 volatile uint16_t angle_test = 0;
 /////////////////////SETUP////////////////////////////
 void setup(){
@@ -62,7 +62,7 @@ void loop(){
 	    last_uart_time = HAL_GetTick();
 
 	    //int len = sprintf(uart_buffer, "Synced: %u RPM: %lu\r\n",synced, rpm);
-	    int len = sprintf(uart_buffer, "tooth: %u\r\n", angle_test);
+	    int len = sprintf(uart_buffer, "angle: %u\r\n", ignition_target_angle_cyl1);
 	    HAL_UART_Transmit(&huart1,
 	                      (uint8_t*)uart_buffer,
 	                      len,
@@ -103,11 +103,6 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 //    	HAL_TIM_Base_Start_IT(&htim3);
 //    }
 
-    if(ignition_target_angle_cyl1 >= tooth_count * 60 && ignition_target_angle_cyl1 < (tooth_count + 1) * 60){
-    			__HAL_TIM_SET_AUTORELOAD(&htim3, 100-1);
-    	        __HAL_TIM_SET_COUNTER(&htim3, 0);
-    	        HAL_TIM_Base_Start_IT(&htim3);
-    }
     tooth_time = capture - last_capture;
     last_capture = capture;
 
@@ -132,7 +127,7 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
         {
         full_tooth_time1 = tooth_time;
         full_tooth_time = (full_tooth_time1+full_tooth_time2+full_tooth_time3+full_tooth_time4)/4;
-    	rpm = 60000000 / (full_tooth_time * 60);
+        rpm = 1000000 / full_tooth_time;
         }
       }
     }
@@ -141,6 +136,15 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
     full_tooth_time4 = full_tooth_time3;
     full_tooth_time3 = full_tooth_time2;
     full_tooth_time2 = full_tooth_time1;
+
+
+    if((ignition_target_angle_cyl1 >= tooth_count * 60 && ignition_target_angle_cyl1 < (tooth_count + 1) * 60)||(tooth_count == 57 && ignition_target_angle_cyl1 >= 3480)){
+
+    				uint16_t delta_angle = ignition_target_angle_cyl1 - tooth_count * 60;
+        			__HAL_TIM_SET_AUTORELOAD(&htim3, (delta_angle*full_tooth_time/60)+1);
+        	        __HAL_TIM_SET_COUNTER(&htim3, 0);
+        	        HAL_TIM_Base_Start_IT(&htim3);
+        }
   }
 }
 
