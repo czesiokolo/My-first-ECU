@@ -138,10 +138,28 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
     full_tooth_time2 = full_tooth_time1;
 
 
-    if((ignition_target_angle_cyl1 >= tooth_count * 60 && ignition_target_angle_cyl1 < (tooth_count + 1) * 60)||(tooth_count == 57 && ignition_target_angle_cyl1 >= 3480)){
+	uint16_t base_angle = tooth_count * 60;
+	uint16_t delta = ignition_target_angle_cyl1 - base_angle;
+	uint32_t delay;
 
-    				uint16_t delta_angle = ignition_target_angle_cyl1 - tooth_count * 60;
-        			__HAL_TIM_SET_AUTORELOAD(&htim3, (delta_angle*full_tooth_time/60)+1);
+    uint8_t in_range = (ignition_target_angle_cyl1 >= base_angle && ignition_target_angle_cyl1 < (tooth_count + 1) * 60);
+    uint8_t in_gap = (tooth_count == 57 && ignition_target_angle_cyl1 >= 3480);
+    if(in_range || in_gap){
+
+    	if(tooth_count == 57 && ignition_target_angle_cyl1 >= 3480)
+    	{
+    	    uint16_t before_gap = 3480 - base_angle;
+    	    uint16_t in_gap = delta - before_gap;
+
+    	    delay = (before_gap * full_tooth_time) / 60
+    	          + (in_gap * full_tooth_time) / 60;
+    	}
+    	else
+    	{
+    	    delay = (delta * full_tooth_time) / 60;
+    	}
+
+        			__HAL_TIM_SET_AUTORELOAD(&htim3, delay+1);
         	        __HAL_TIM_SET_COUNTER(&htim3, 0);
         	        HAL_TIM_Base_Start_IT(&htim3);
         }
