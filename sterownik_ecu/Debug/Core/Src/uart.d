@@ -27,7 +27,7 @@ Core/Src/uart.o: ../Core/Src/uart.c ../Core/Inc/uart.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
- ../Core/Inc/ignition.h
+ ../Core/Inc/ignition.h ../Core/Inc/trigger.h
 ../Core/Inc/uart.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
@@ -58,3 +58,4 @@ Core/Src/uart.o: ../Core/Src/uart.c ../Core/Inc/uart.h \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
 ../Core/Inc/ignition.h:
+../Core/Inc/trigger.h:
