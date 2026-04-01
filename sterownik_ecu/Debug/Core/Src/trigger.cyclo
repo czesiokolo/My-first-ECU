@@ -1,1 +1,2 @@
-../Core/Src/trigger.c:23:6:HAL_TIM_IC_CaptureCallback	15
+../Core/Src/trigger.c:27:6:HAL_TIM_IC_CaptureCallback	17
+../Core/Src/trigger.c:118:10:median5	5

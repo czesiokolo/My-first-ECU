@@ -1,3 +1,3 @@
 ../Core/Src/ignition.c:15:6:HAL_TIM_PeriodElapsedCallback	3
 ../Core/Src/ignition.c:37:6:ignition_angle_set	3
-../Core/Src/ignition.c:47:6:ignition_update	1
+../Core/Src/ignition.c:50:6:ignition_update	1

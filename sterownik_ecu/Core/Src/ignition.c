@@ -6,10 +6,10 @@
  */
 #include <ignition.h>
 volatile uint16_t ignition_target_angle_cyl1 = 0;
-volatile uint16_t ignition_angle = -60;
+volatile uint16_t ignition_angle = 0;
 volatile uint8_t ign_cyl1 = 0;
 volatile uint16_t angle_test = 0;
-volatile uint16_t dwell_time = 1300;
+volatile uint32_t dwell_time = 2000;
 
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
@@ -36,18 +36,23 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 }
 void ignition_angle_set(int16_t angle)
 {
+	angle += zero_offest;
     while(angle < 0)
         angle += 3600;
 
     while(angle >= 3600)
         angle -= 3600;
 
+    __disable_irq();
     ignition_target_angle_cyl1 = angle;
+    __enable_irq();
 }
 void ignition_update(){
 
-		int32_t delta_angle = (int32_t)dwell_time * 60 / full_tooth_time;
-	    int16_t ignition_charge_start = ignition_angle - delta_angle;
+
+	int32_t delta_angle = dwell_time * 60 / full_tooth_time;
+	int16_t ignition_charge_start = ignition_angle - delta_angle;
 
 	    ignition_angle_set(ignition_charge_start);
+
 }

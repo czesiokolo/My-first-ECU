@@ -7,6 +7,7 @@
 
 #ifndef INC_MAIN2_H_
 #define INC_MAIN2_H_
+
 void ignition_angle_set(int16_t angle);
 void setup();
 void loop();
