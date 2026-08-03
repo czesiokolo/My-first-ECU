@@ -8,6 +8,7 @@
 #include <main2.h>
 #include <trigger.h>
 #include <ignition.h>
+#include <can.h>
 #include <uart.h>
 #include "stdio.h"
 #include <string.h>
@@ -21,6 +22,7 @@ void setup(){
 	HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_4);
 	HAL_UART_Receive_IT(&huart1, &rx_char, 1);
 
+
 }
 //////////////////////////////////////////////////////
 /////////////////////LOOP/////////////////////////////
@@ -33,14 +35,16 @@ void loop(){
 	    last_uart_time = HAL_GetTick();
 
 	    //int len = sprintf(uart_buffer, "Synced: %u RPM: %lu\r\n",synced, rpm);
-	    int len = sprintf(uart_buffer, "counter: %lu\r\n", counter);
-	    HAL_UART_Transmit(&huart1,
-	                      (uint8_t*)uart_buffer,
-	                      len,
-	                      HAL_MAX_DELAY);
+//	    int len = sprintf(uart_buffer, "counter: %lu\r\n", counter);
+//	    HAL_UART_Transmit(&huart1,
+//	                      (uint8_t*)uart_buffer,
+//	                      len,
+//	                      HAL_MAX_DELAY);
 	    counter = 0;
+	    can_update();
 	  }
 	ignition_update();
+
 
 
 }

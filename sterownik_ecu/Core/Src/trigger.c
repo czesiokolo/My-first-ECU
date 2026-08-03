@@ -19,10 +19,11 @@ volatile uint8_t tooth_count = 0;
 volatile uint8_t synced = 0;
 
 
-
+volatile uint8_t cam_side = 0;
 volatile uint32_t tooth_buf[TOOTH_BUF_SIZE] = {0};
 volatile uint8_t tooth_idx = 0;
 volatile uint32_t rpm = 0;
+volatile uint16_t crank_angle = 0;
 
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
@@ -49,18 +50,19 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 
 
         synced = 1;
-
+        cam_side = (GPIOD->IDR & GPIO_IDR_ID12) != 0U;
+        if(cam_side){ crank_angle += 180;} else {crank_angle = 0;}
         if(tooth_count != 58){
         	synced = 0;
 
         }
-        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, synced);
+
         tooth_count = 0;
       }
       else
       {
         tooth_count++;
-
+        crank_angle += 60;
 
 
         if(tooth_time > 0)
@@ -87,32 +89,27 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 
 
 
-	uint16_t base_angle = tooth_count * 60;
-	uint16_t delta = ignition_target_angle_cyl1 - base_angle;
-	uint32_t delay;
 
-    uint8_t in_range = (ignition_target_angle_cyl1 >= base_angle && ignition_target_angle_cyl1 < (tooth_count + 1) * 60);
-    uint8_t in_gap = (tooth_count == 57 && ignition_target_angle_cyl1 >= 3480);
-    if(in_range || in_gap){
+	uint16_t delta = ignition_target_angle_cyl1 - crank_angle;
 
-    	if(tooth_count == 57 && ignition_target_angle_cyl1 >= 3480)
-    	{
-    	    uint16_t before_gap = 3480 - base_angle;
-    	    uint16_t in_gap = delta - before_gap;
+	uint16_t sector = (tooth_count == 57) ? 180 : 60;
 
-    	    delay = (before_gap * full_tooth_time) / 60
-    	          + (in_gap * full_tooth_time) / 60;
-    	}
-    	else
-    	{
-    	    delay = (delta * full_tooth_time) / 60;
-    	}
+    uint8_t in_range =
+        (ignition_target_angle_cyl1 >= crank_angle) &&
+        (ignition_target_angle_cyl1 < crank_angle + sector);
 
+    if (in_range)
+    {
+        uint32_t tooth_time = (tooth_count == 57) ?
+                              (3 * full_tooth_time) :
+                              full_tooth_time;
 
-        			__HAL_TIM_SET_AUTORELOAD(&htim3, delay+1);
-        	        __HAL_TIM_SET_COUNTER(&htim3, 0);
-        	        HAL_TIM_Base_Start_IT(&htim3);
-        }
+        uint32_t delay = (delta * tooth_time) / sector;
+        __HAL_TIM_SET_AUTORELOAD(&htim3, delay+1);
+        __HAL_TIM_SET_COUNTER(&htim3, 0);
+        HAL_TIM_Base_Start_IT(&htim3);
+    }
+
   }
 }
 uint32_t median5(uint32_t *buf)
