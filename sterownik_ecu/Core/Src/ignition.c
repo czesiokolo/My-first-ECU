@@ -5,6 +5,7 @@
  *      Author: admin
  */
 #include <ignition.h>
+volatile uint8_t ignition_cyl = 1;
 volatile uint16_t ignition_target_angle_cyl1 = 0;
 volatile uint16_t ignition_target_angle_cyl2 = 0;
 volatile uint16_t ignition_target_angle_cyl3 = 0;
@@ -16,9 +17,19 @@ volatile uint8_t ign_cyl1 = 0;
 volatile uint16_t angle_test = 0;
 volatile uint32_t dwell_time = 2000;
 
+volatile uint8_t coil_state[6] = {0};
+volatile uint16_t ignition_target_angle[6];
+
+volatile float omega = 0; //predkosc katowa
+volatile float omega_prev = 0;
+volatile float alpha = 0; //przyspieszenie katowe
+
+
+
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
+
     if(htim->Instance == TIM3)
     {
     	if(ign_cyl1 == 0){
@@ -55,22 +66,25 @@ void ignition_angle_set(int16_t angle)
 {
 
 
-    __disable_irq();
-    ignition_target_angle_cyl1 = angle_rollover(angle);
-    ignition_target_angle_cyl5 = angle_rollover(angle+1200);
-    ignition_target_angle_cyl3 = angle_rollover(angle+2400);
-    ignition_target_angle_cyl6 = angle_rollover(angle+3600);
-    ignition_target_angle_cyl2 = angle_rollover(angle+4800);
-    ignition_target_angle_cyl4 = angle_rollover(angle+6000);
-    __enable_irq();
+
+    ignition_target_angle[0] = angle_rollover(angle);
+    ignition_target_angle[1] = angle_rollover(angle + 1200);
+    ignition_target_angle[2] = angle_rollover(angle + 2400);
+    ignition_target_angle[3] = angle_rollover(angle + 3600);
+    ignition_target_angle[4] = angle_rollover(angle + 4800);
+    ignition_target_angle[5] = angle_rollover(angle + 6000);
+
 }
 
-void ignition_update(){
+void ignition_update(void)
+{
+    float t = (float)dwell_time;
 
+    float delta_angle =
+        omega * t +
+        0.5f * alpha * t * t;
 
-	int32_t delta_angle = dwell_time * 60 / full_tooth_time;
-	int16_t ignition_charge_start = ignition_angle - delta_angle;
-
-	    ignition_angle_set(ignition_charge_start);
-
+    ignition_angle_set(
+        ignition_angle - (int16_t)(delta_angle + 0.5f)
+    );
 }

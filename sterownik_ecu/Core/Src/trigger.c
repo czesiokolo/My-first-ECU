@@ -12,6 +12,8 @@ volatile uint32_t zero_offest = 0;
 volatile uint32_t last_capture = 0;
 volatile uint32_t tooth_time = 0;
 volatile uint32_t full_tooth_time = 0;
+volatile uint32_t prev_full_tooth_time = 0;
+
 
 volatile uint32_t prev_tooth_time = 0;
 
@@ -25,6 +27,7 @@ volatile uint8_t tooth_idx = 0;
 volatile uint32_t rpm = 0;
 volatile uint16_t crank_angle = 0;
 
+
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
   if(htim->Instance == TIM2 &&
@@ -33,11 +36,7 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
   {
     uint32_t capture = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_4);
 
-//    if(tooth_count == angle_test){
-//    	__HAL_TIM_SET_AUTORELOAD(&htim3, 10-1);
-//    	__HAL_TIM_SET_COUNTER(&htim3, 0);
-//    	HAL_TIM_Base_Start_IT(&htim3);
-//    }
+
 
     tooth_time = capture - last_capture;
     last_capture = capture;
@@ -45,19 +44,24 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
     if(prev_tooth_time != 0)
     {
 
+
       if(tooth_time > prev_tooth_time * 3 / 2)
       {
 
-
         synced = 1;
         cam_side = (GPIOD->IDR & GPIO_IDR_ID12) != 0U;
-        if(cam_side){ crank_angle += 180;} else {crank_angle = 0;}
+        if(cam_side){
+        	crank_angle += 180;}
+        else {
+        	crank_angle = 0;
+        	ignition_cyl = 1;}
+
         if(tooth_count != 58){
         	synced = 0;
 
         }
-
         tooth_count = 0;
+
       }
       else
       {
@@ -77,7 +81,17 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 
         	if(med > 0)
         	{
-        	    full_tooth_time = med;
+        		prev_full_tooth_time = full_tooth_time;
+        		full_tooth_time = med;
+
+        		omega_prev = omega;
+        		omega = 60.0f / full_tooth_time;
+
+        		float dt = (full_tooth_time + prev_full_tooth_time) * 0.5f;
+
+        		alpha = (omega - omega_prev) / dt;
+
+
         	    rpm = 1000000 / full_tooth_time;
         	}
 
@@ -90,25 +104,34 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 
 
 
-	uint16_t delta = ignition_target_angle_cyl1 - crank_angle;
+
 
 	uint16_t sector = (tooth_count == 57) ? 180 : 60;
 
-    uint8_t in_range =
-        (ignition_target_angle_cyl1 >= crank_angle) &&
-        (ignition_target_angle_cyl1 < crank_angle + sector);
+	uint32_t tooth_time = (tooth_count == 57) ?
+	                      (3 * full_tooth_time) :
+	                      full_tooth_time;
 
-    if (in_range)
-    {
-        uint32_t tooth_time = (tooth_count == 57) ?
-                              (3 * full_tooth_time) :
-                              full_tooth_time;
+	for(uint8_t cyl = 0; cyl < 5; cyl+=2)
+	{
+	    uint16_t target = ignition_target_angle[cyl];
 
-        uint32_t delay = (delta * tooth_time) / sector;
-        __HAL_TIM_SET_AUTORELOAD(&htim3, delay+1);
-        __HAL_TIM_SET_COUNTER(&htim3, 0);
-        HAL_TIM_Base_Start_IT(&htim3);
-    }
+	    if(target >= crank_angle &&
+	       target < crank_angle + sector)
+	    {
+	        uint16_t delta = target - crank_angle;
+
+	        uint32_t delay = (delta * tooth_time) / sector;
+
+	        __HAL_TIM_SET_AUTORELOAD(&htim3, delay + 1);
+	        __HAL_TIM_SET_COUNTER(&htim3, 0);
+
+	        ignition_cyl = cyl + 1;
+	        HAL_TIM_Base_Start_IT(&htim3);
+
+	        break;
+	    }
+	}
 
   }
 }
