@@ -1,0 +1,5 @@
+../Core/Src/engine_info.c:62:16:find_index	24	static
+../Core/Src/engine_info.c:79:6:engine_update	8	static
+../Core/Src/engine_info.c:83:6:map_update	4	static
+../Core/Src/engine_info.c:86:6:maf_update	4	static
+../Core/Src/engine_info.c:89:6:dwell_update	16	static

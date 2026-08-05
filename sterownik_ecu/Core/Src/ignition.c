@@ -5,6 +5,7 @@
  *      Author: admin
  */
 #include <ignition.h>
+#include <engine_info.h>
 volatile uint8_t ignition_cyl = 1;
 volatile uint16_t ignition_target_angle_cyl1 = 0;
 volatile uint16_t ignition_target_angle_cyl2 = 0;
@@ -15,7 +16,7 @@ volatile uint16_t ignition_target_angle_cyl6 = 0;
 volatile uint16_t ignition_angle = 0;
 volatile uint8_t ign_cyl1 = 0;
 volatile uint16_t angle_test = 0;
-volatile uint32_t dwell_time = 2000;
+
 
 volatile uint8_t coil_state[6] = {0};
 volatile uint16_t ignition_target_angle[6];

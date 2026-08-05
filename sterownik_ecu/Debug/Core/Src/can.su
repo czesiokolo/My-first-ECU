@@ -1,1 +1,2 @@
-../Core/Src/can.c:12:6:can_update	104	static
+../Core/Src/can.c:14:13:CAN_Send4xU16	64	static
+../Core/Src/can.c:47:6:can_update	16	static

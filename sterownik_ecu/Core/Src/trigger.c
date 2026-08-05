@@ -6,12 +6,13 @@
  */
 #include <trigger.h>
 #include <ignition.h>
+#include <engine_info.h>
 
 volatile uint32_t zero_offest = 0;
 
 volatile uint32_t last_capture = 0;
 volatile uint32_t tooth_time = 0;
-volatile uint32_t full_tooth_time = 0;
+
 volatile uint32_t prev_full_tooth_time = 0;
 
 
@@ -24,7 +25,7 @@ volatile uint8_t synced = 0;
 volatile uint8_t cam_side = 0;
 volatile uint32_t tooth_buf[TOOTH_BUF_SIZE] = {0};
 volatile uint8_t tooth_idx = 0;
-volatile uint32_t rpm = 0;
+
 volatile uint16_t crank_angle = 0;
 
 
@@ -92,7 +93,7 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
         		alpha = (omega - omega_prev) / dt;
 
 
-        	    rpm = 1000000 / full_tooth_time;
+
         	}
 
         }

@@ -13,7 +13,7 @@
 #include "stdio.h"
 #include <string.h>
 #include <stdlib.h>
-
+#include <engine_info.h>
 
 
 volatile uint32_t counter = 0;
@@ -28,7 +28,7 @@ void setup(){
 /////////////////////LOOP/////////////////////////////
 void loop(){
 	counter++;
-	if(HAL_GetTick() - last_uart_time >= 500)
+	if(HAL_GetTick() - last_uart_time >= 100)
 	  {
 
 		HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_6);
@@ -43,6 +43,7 @@ void loop(){
 	    counter = 0;
 	    can_update();
 	  }
+	engine_update();
 	ignition_update();
 
 
