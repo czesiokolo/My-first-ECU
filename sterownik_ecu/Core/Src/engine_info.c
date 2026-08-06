@@ -6,15 +6,16 @@
  */
 #include <engine_info.h>
 
+volatile uint16_t adc_buffer[ADC_CHANNELS];
 volatile uint16_t rpm = 0;					//rpm
 
 volatile uint16_t ignition_time = 0;		//degree
-volatile uint32_t dwell_time = 2000;
+volatile uint32_t dwell_time = 0;
 
 volatile uint16_t map = 0;					//bar
 volatile uint16_t maf = 0;					//g/s
 volatile uint16_t lambda = 0;				//lambda
-volatile uint16_t voltage = 1200;			//100 = 1v
+volatile uint16_t voltage = 1200;				//100 = 1v
 volatile uint16_t accelerator = 0;			//%
 volatile uint16_t egt = 0;					//C
 volatile uint16_t iat = 0;					//C
@@ -60,11 +61,14 @@ const uint16_t dwell_map[8][8] =
 };
 
 static uint8_t find_index(const uint16_t *axis,
-                                uint8_t size,
-                                uint16_t value)
+                          uint8_t size,
+                          uint16_t value)
 {
     if(value <= axis[0])
         return 0;
+
+    if(value >= axis[size - 1])
+        return size - 2;
 
     for(uint8_t i = 0; i < size - 1; i++)
     {
@@ -72,29 +76,79 @@ static uint8_t find_index(const uint16_t *axis,
             return i;
     }
 
-    return size - 1;
+    return size - 2;
 }
 
+static uint16_t interpolate(uint16_t x0,
+                            uint16_t x1,
+                            uint16_t y0,
+                            uint16_t y1,
+                            uint16_t x)
+{
+    if(x1 == x0)
+        return y0;
+
+    int32_t dy = (int32_t)y1 - (int32_t)y0;
+
+    return (uint16_t)(y0 + (dy * (int32_t)(x - x0)) / (int32_t)(x1 - x0));
+}
+
+uint16_t table2d_lookup(const uint16_t *x_axis,
+                        uint8_t x_size,
+                        const uint16_t *y_axis,
+                        uint8_t y_size,
+                        const uint16_t *table,
+                        uint16_t x,
+                        uint16_t y)
+{
+    uint8_t xi = find_index(x_axis, x_size, x);
+    uint8_t yi = find_index(y_axis, y_size, y);
+
+    uint16_t x0 = x_axis[xi];
+    uint16_t x1 = x_axis[xi + 1];
+
+    uint16_t y0 = y_axis[yi];
+    uint16_t y1 = y_axis[yi + 1];
+
+    uint16_t q11 = table[xi * y_size + yi];
+    uint16_t q12 = table[xi * y_size + yi + 1];
+    uint16_t q21 = table[(xi + 1) * y_size + yi];
+    uint16_t q22 = table[(xi + 1) * y_size + yi + 1];
+
+    uint16_t r1 = interpolate(y0, y1, q11, q12, y);
+    uint16_t r2 = interpolate(y0, y1, q21, q22, y);
+
+    return interpolate(x0, x1, r1, r2, x);
+}
+void voltage_update(void)
+{
+	//voltage = (uint16_t)(((uint32_t)adc_buffer[0] * 24100U) / 40950U);
+}
 
 void engine_update(){
 	rpm = 1000000 / full_tooth_time;
+
+
+	voltage_update();
 	dwell_update();
+}
+
+void dwell_update(void)
+{
+
+    dwell_time = table2d_lookup(dwell_rpm_axis,
+                                8,
+                                dwell_voltage_axis,
+                                8,
+                                &dwell_map[0][0],
+                                rpm,
+                                voltage);
 }
 void map_update(){
 	map = 0;
 }
 void maf_update(){
 	maf = 0;
-}
-void dwell_update(void)
-{
-    uint8_t rpm_idx =
-        find_index(dwell_rpm_axis, 8, rpm);
-
-    uint8_t volt_idx =
-        find_index(dwell_voltage_axis, 8, voltage);
-
-    dwell_time = dwell_map[rpm_idx][volt_idx];
 }
 
 

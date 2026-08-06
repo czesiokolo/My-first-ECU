@@ -8,6 +8,10 @@
 #ifndef INC_ENGINE_INFO_H_
 #define INC_ENGINE_INFO_H_
 #include "stm32f4xx_hal.h"
+#define ADC_CHANNELS 8
+
+extern volatile uint16_t adc_buffer[ADC_CHANNELS];
+
 
 //actual
 
