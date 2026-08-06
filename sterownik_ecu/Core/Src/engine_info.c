@@ -15,7 +15,7 @@ volatile uint32_t dwell_time = 0;
 volatile uint16_t map = 0;					//bar
 volatile uint16_t maf = 0;					//g/s
 volatile uint16_t lambda = 0;				//lambda
-volatile uint16_t voltage = 1200;				//100 = 1v
+volatile uint16_t voltage = 0;				//100 = 1v
 volatile uint16_t accelerator = 0;			//%
 volatile uint16_t egt = 0;					//C
 volatile uint16_t iat = 0;					//C
@@ -30,34 +30,31 @@ volatile uint16_t target_rpm = 0;
 volatile uint16_t target_rpm_regulator = 0;
 
 
-const uint16_t dwell_rpm_axis[8] =
+const uint16_t dwell_rpm_axis[6] =
 {
-     0, 500, 1000, 2000,
-  3000, 4000, 5500, 7000
+     0, 500, 1000, 2000, 3000, 5000
 };
-const uint16_t dwell_voltage_axis[8] =
+const uint16_t dwell_voltage_axis[6] =
 {
-     900,
-    1000,
-    1100,
-    1200,
-    1300,
-    1400,
-    1450,
-    1500
-};
-const uint16_t dwell_map[8][8] =
-{
-    //   9.0   10.0  11.0  12.0  13.0  14.0  14.5  15.0 V
+     600,
+	 800,
+	 1000,
+	 1200,
+	 1400,
+	 1600
 
-    {5200,4700,4300,3900,3500,3200,3000,2900}, //    0 rpm
-    {5100,4600,4200,3800,3400,3150,2950,2850}, //  500
-    {5000,4500,4100,3700,3350,3100,2900,2800}, // 1000
-    {4900,4400,4000,3600,3250,3000,2850,2750}, // 2000
-    {4800,4300,3900,3500,3200,2950,2800,2700}, // 3000
-    {4700,4200,3800,3450,3150,2900,2750,2650}, // 4000
-    {4600,4100,3700,3400,3100,2850,2700,2600}, // 5500
-    {4500,4000,3600,3300,3000,2800,2650,2550}  // 7000
+};
+const uint16_t dwell_map[6][6] =
+{
+    //   6.0   8.0  10.0  12.0  14.0 16.0 V
+
+    {4500,4000,3250,2900,2700,2600}, //    0 rpm
+    {4000,3500,3000,2750,2550,2500}, //  500
+    {3700,3200,2900,2575,2500,2450}, // 1000
+    {3600,3100,2800,2475,2400,2350}, // 2000
+    {3500,3000,2700,2375,2250,2200}, // 3000
+    {3500,3000,2700,2375,2250,2200} // 5000
+
 };
 
 static uint8_t find_index(const uint16_t *axis,
@@ -85,8 +82,14 @@ static uint16_t interpolate(uint16_t x0,
                             uint16_t y1,
                             uint16_t x)
 {
-    if(x1 == x0)
+    if(x1 <= x0)
         return y0;
+
+    if(x <= x0)
+        return y0;
+
+    if(x >= x1)
+        return y1;
 
     int32_t dy = (int32_t)y1 - (int32_t)y0;
 
@@ -122,7 +125,7 @@ uint16_t table2d_lookup(const uint16_t *x_axis,
 }
 void voltage_update(void)
 {
-	//voltage = (uint16_t)(((uint32_t)adc_buffer[0] * 24100U) / 40950U);
+	voltage = (uint16_t)(((uint32_t)adc_buffer[0] * 24100U) / 40950U);
 }
 
 void engine_update(){
@@ -137,9 +140,9 @@ void dwell_update(void)
 {
 
     dwell_time = table2d_lookup(dwell_rpm_axis,
-                                8,
+                                6,
                                 dwell_voltage_axis,
-                                8,
+                                6,
                                 &dwell_map[0][0],
                                 rpm,
                                 voltage);

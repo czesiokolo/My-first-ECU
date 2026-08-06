@@ -1,8 +1,8 @@
-../Core/Src/engine_info.c:63:16:find_index	24	static
-../Core/Src/engine_info.c:82:17:interpolate	24	static
-../Core/Src/engine_info.c:96:10:table2d_lookup	64	static
-../Core/Src/engine_info.c:123:6:voltage_update	4	static
-../Core/Src/engine_info.c:128:6:engine_update	8	static
-../Core/Src/engine_info.c:136:6:dwell_update	24	static
-../Core/Src/engine_info.c:147:6:map_update	4	static
-../Core/Src/engine_info.c:150:6:maf_update	4	static
+../Core/Src/engine_info.c:60:16:find_index	24	static
+../Core/Src/engine_info.c:79:17:interpolate	24	static
+../Core/Src/engine_info.c:99:10:table2d_lookup	64	static
+../Core/Src/engine_info.c:126:6:voltage_update	4	static
+../Core/Src/engine_info.c:131:6:engine_update	8	static
+../Core/Src/engine_info.c:139:6:dwell_update	24	static
+../Core/Src/engine_info.c:150:6:map_update	4	static
+../Core/Src/engine_info.c:153:6:maf_update	4	static

@@ -61,18 +61,10 @@ void Error_Handler(void);
 #define VOLTAGE_GPIO_Port GPIOA
 #define MAP_Pin GPIO_PIN_1
 #define MAP_GPIO_Port GPIOA
-#define MAF_Pin GPIO_PIN_2
-#define MAF_GPIO_Port GPIOA
-#define ACC_Pin GPIO_PIN_3
-#define ACC_GPIO_Port GPIOA
 #define IAT_Pin GPIO_PIN_4
 #define IAT_GPIO_Port GPIOA
 #define COOL_ENGINE_Pin GPIO_PIN_5
 #define COOL_ENGINE_GPIO_Port GPIOA
-#define COOL_BEF_ENG_Pin GPIO_PIN_0
-#define COOL_BEF_ENG_GPIO_Port GPIOB
-#define LAMBDA_Pin GPIO_PIN_1
-#define LAMBDA_GPIO_Port GPIOB
 #define CPS_Pin GPIO_PIN_8
 #define CPS_GPIO_Port GPIOA
 
