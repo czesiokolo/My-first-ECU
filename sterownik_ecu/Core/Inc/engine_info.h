@@ -25,10 +25,10 @@ extern volatile uint16_t map;
 extern volatile uint16_t maf;
 extern volatile uint16_t voltage;
 extern volatile uint16_t lambda;
-extern volatile uint16_t egt;
-extern volatile uint16_t iat;
-extern volatile uint16_t coolant_temp_engine;
-extern volatile uint16_t coolant_temp_cooler;
+extern volatile int16_t egt;
+extern volatile int16_t iat;
+extern volatile int16_t coolant_temp_engine;
+extern volatile int16_t coolant_temp_cooler;
 extern volatile uint16_t accelerator;
 extern volatile uint16_t rpm_regulator;
 

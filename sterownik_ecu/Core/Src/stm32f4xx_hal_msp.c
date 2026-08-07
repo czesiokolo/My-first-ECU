@@ -120,18 +120,18 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
     PB0     ------> ADC1_IN8
     PB1     ------> ADC1_IN9
     */
-    GPIO_InitStruct.Pin = GPIO_PIN_0;
+    GPIO_InitStruct.Pin = LAMBDA_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+    HAL_GPIO_Init(LAMBDA_GPIO_Port, &GPIO_InitStruct);
 
-    GPIO_InitStruct.Pin = VOLTAGE_Pin|MAP_Pin|GPIO_PIN_2|IAT_Pin
+    GPIO_InitStruct.Pin = VOLTAGE_Pin|MAP_Pin|MAF_Pin|IAT_Pin
                           |COOL_ENGINE_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-    GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1;
+    GPIO_InitStruct.Pin = IATB0_Pin|COOLANT_TEMP_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
@@ -192,12 +192,12 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* hadc)
     PB0     ------> ADC1_IN8
     PB1     ------> ADC1_IN9
     */
-    HAL_GPIO_DeInit(GPIOC, GPIO_PIN_0);
+    HAL_GPIO_DeInit(LAMBDA_GPIO_Port, LAMBDA_Pin);
 
-    HAL_GPIO_DeInit(GPIOA, VOLTAGE_Pin|MAP_Pin|GPIO_PIN_2|IAT_Pin
+    HAL_GPIO_DeInit(GPIOA, VOLTAGE_Pin|MAP_Pin|MAF_Pin|IAT_Pin
                           |COOL_ENGINE_Pin);
 
-    HAL_GPIO_DeInit(GPIOB, GPIO_PIN_0|GPIO_PIN_1);
+    HAL_GPIO_DeInit(GPIOB, IATB0_Pin|COOLANT_TEMP_Pin);
 
     /* ADC1 DMA DeInit */
     HAL_DMA_DeInit(hadc->DMA_Handle);

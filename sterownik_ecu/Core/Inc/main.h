@@ -57,14 +57,22 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define LAMBDA_Pin GPIO_PIN_0
+#define LAMBDA_GPIO_Port GPIOC
 #define VOLTAGE_Pin GPIO_PIN_0
 #define VOLTAGE_GPIO_Port GPIOA
 #define MAP_Pin GPIO_PIN_1
 #define MAP_GPIO_Port GPIOA
+#define MAF_Pin GPIO_PIN_2
+#define MAF_GPIO_Port GPIOA
 #define IAT_Pin GPIO_PIN_4
 #define IAT_GPIO_Port GPIOA
 #define COOL_ENGINE_Pin GPIO_PIN_5
 #define COOL_ENGINE_GPIO_Port GPIOA
+#define IATB0_Pin GPIO_PIN_0
+#define IATB0_GPIO_Port GPIOB
+#define COOLANT_TEMP_Pin GPIO_PIN_1
+#define COOLANT_TEMP_GPIO_Port GPIOB
 #define CPS_Pin GPIO_PIN_8
 #define CPS_GPIO_Port GPIOA
 
