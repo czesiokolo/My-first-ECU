@@ -73,6 +73,18 @@ void Error_Handler(void);
 #define IATB0_GPIO_Port GPIOB
 #define COOLANT_TEMP_Pin GPIO_PIN_1
 #define COOLANT_TEMP_GPIO_Port GPIOB
+#define Ign_1_Pin GPIO_PIN_13
+#define Ign_1_GPIO_Port GPIOD
+#define Ign_2_Pin GPIO_PIN_14
+#define Ign_2_GPIO_Port GPIOD
+#define Ign_3_Pin GPIO_PIN_15
+#define Ign_3_GPIO_Port GPIOD
+#define Ign_4_Pin GPIO_PIN_6
+#define Ign_4_GPIO_Port GPIOC
+#define Ign_5_Pin GPIO_PIN_7
+#define Ign_5_GPIO_Port GPIOC
+#define Ign_6_Pin GPIO_PIN_8
+#define Ign_6_GPIO_Port GPIOC
 #define CPS_Pin GPIO_PIN_8
 #define CPS_GPIO_Port GPIOA
 

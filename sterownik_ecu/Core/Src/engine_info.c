@@ -13,7 +13,7 @@ volatile uint16_t rpm = 0;					//rpm
 volatile uint16_t ignition_time = 0;		//degree
 volatile uint32_t dwell_time = 0;
 
-volatile uint16_t map = 0;					//bar
+volatile uint16_t map = 0;					//mbar
 volatile uint16_t maf = 0;					//g/s
 volatile uint16_t lambda = 0;				//lambda
 volatile uint16_t voltage = 0;				//100 = 1v
@@ -29,6 +29,38 @@ volatile uint32_t full_tooth_time = 0;		//us
 volatile uint16_t target_lambda = 0;
 volatile uint16_t target_rpm = 0;
 volatile uint16_t target_rpm_regulator = 0;
+
+
+const uint16_t ignition_rpm_axis[8] =
+{
+     500, 1000, 2000, 3000, 4000, 5000, 6000, 6500
+
+};
+const uint16_t ignition_map_axis[8] =
+{
+	 200,
+	 400,
+	 500,
+	 700,
+	 900,
+	 1000,
+	 1200,
+	 1300
+};
+const uint16_t ignition_map[8][8] =
+{	 //  200  400  500  700  900  1000 1200 1300
+	    {180, 180, 180, 200, 240, 280, 320, 370}, //  500
+	    {170, 180, 185, 205, 240, 280, 320, 360}, // 1000
+	    {155, 175, 185, 205, 240, 280, 320, 340}, // 2000
+	    {145, 170, 185, 205, 240, 280, 320, 300}, // 3000
+	    {135, 165, 185, 205, 240, 280, 320, 300}, // 4000
+	    {125, 160, 185, 205, 240, 280, 320, 290}, // 5000
+	    {115, 155, 185, 205, 240, 280, 320, 270}, // 6000
+	    {105, 150, 185, 205, 240, 280, 320, 260}  // 6500
+
+
+};
+
 
 
 const uint16_t dwell_rpm_axis[6] =

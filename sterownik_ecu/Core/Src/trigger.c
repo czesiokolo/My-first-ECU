@@ -133,7 +133,26 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 	        break;
 	    }
 	}
+	for(uint8_t cyl = 1; cyl < 6; cyl+=2)
+		{
+		    uint16_t target = ignition_target_angle[cyl];
 
+		    if(target >= crank_angle &&
+		       target < crank_angle + sector)
+		    {
+		        uint16_t delta = target - crank_angle;
+
+		        uint32_t delay = (delta * tooth_time) / sector;
+
+		        __HAL_TIM_SET_AUTORELOAD(&htim4, delay + 1);
+		        __HAL_TIM_SET_COUNTER(&htim4, 0);
+
+		        ignition_cyl = cyl + 1;
+		        HAL_TIM_Base_Start_IT(&htim4);
+
+		        break;
+		    }
+		}
   }
 }
 uint32_t median5(uint32_t *buf)

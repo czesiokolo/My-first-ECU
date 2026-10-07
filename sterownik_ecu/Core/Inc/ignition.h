@@ -14,6 +14,8 @@
 ///////////////////IGNITION VARIABLES ////////////////
 extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
+extern TIM_HandleTypeDef htim5;
+extern TIM_HandleTypeDef htim6;
 extern volatile uint16_t ignition_target_angle_cyl1;
 extern volatile uint8_t ign_cyl1;
 extern uint16_t pulse_time;
