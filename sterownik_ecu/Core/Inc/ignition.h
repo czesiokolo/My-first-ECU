@@ -8,7 +8,6 @@
 #ifndef INC_IGNITION_H_
 #define INC_IGNITION_H_
 #include "stm32f4xx_hal.h"
-#include <ignition.h>
 #include <trigger.h>
 //////////////////////////////////////////////////////
 ///////////////////IGNITION VARIABLES ////////////////
@@ -30,8 +29,10 @@ extern volatile float omega_prev;
 extern volatile float alpha; //przyspieszenie katowe
 
 
+
 #endif /* INC_IGNITION_H_ */
 
-
+void ignition_coil_on(uint8_t channel);
+void ignition_coil_off(uint8_t channel);
 void ignition_angle_set(int16_t angle);
 void ignition_update();

@@ -6,6 +6,7 @@
  */
 #include <trigger.h>
 #include <ignition.h>
+#include <scheduler.h>
 #include <engine_info.h>
 
 volatile uint32_t zero_offest = 0;
@@ -109,50 +110,43 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 
 	uint16_t sector = (tooth_count == 57) ? 180 : 60;
 
-	uint32_t tooth_time = (tooth_count == 57) ?
-	                      (3 * full_tooth_time) :
-	                      full_tooth_time;
+	uint32_t predicted_sector_time =
+	    (tooth_count == 57) ? (3U * full_tooth_time) : full_tooth_time;
 
-	for(uint8_t cyl = 0; cyl < 5; cyl+=2)
+
+
+
+	uint32_t now = TIM5->CNT;
+
+	for (uint8_t cyl = 0; cyl < 6; cyl++)
 	{
 	    uint16_t target = ignition_target_angle[cyl];
 
-	    if(target >= crank_angle &&
-	       target < crank_angle + sector)
+	    if (target >= crank_angle &&
+	        target < crank_angle + sector)
 	    {
 	        uint16_t delta = target - crank_angle;
 
-	        uint32_t delay = (delta * tooth_time) / sector;
+	        // Czas do początku ładowania cewki
+	        uint32_t delay =
+	        	    ((uint32_t)delta * predicted_sector_time) / sector;
 
-	        __HAL_TIM_SET_AUTORELOAD(&htim3, delay + 1);
-	        __HAL_TIM_SET_COUNTER(&htim3, 0);
+	        uint32_t dwell_start_time = now + delay;
 
-	        ignition_cyl = cyl + 1;
-	        HAL_TIM_Base_Start_IT(&htim3);
-
-	        break;
+	        // Zaktualizuj lub dodaj zdarzenie rozpoczęcia ładowania
+	        events_add_or_update(
+	            EVENT_IGNITION_DWELL_ON,
+	            cyl,
+	            dwell_start_time
+	        );
+	        events_add_or_update(
+	            EVENT_IGNITION_SPARK_OFF,
+	            cyl,
+	            dwell_start_time+dwell_time
+	        );
 	    }
 	}
-	for(uint8_t cyl = 1; cyl < 6; cyl+=2)
-		{
-		    uint16_t target = ignition_target_angle[cyl];
 
-		    if(target >= crank_angle &&
-		       target < crank_angle + sector)
-		    {
-		        uint16_t delta = target - crank_angle;
-
-		        uint32_t delay = (delta * tooth_time) / sector;
-
-		        __HAL_TIM_SET_AUTORELOAD(&htim4, delay + 1);
-		        __HAL_TIM_SET_COUNTER(&htim4, 0);
-
-		        ignition_cyl = cyl + 1;
-		        HAL_TIM_Base_Start_IT(&htim4);
-
-		        break;
-		    }
-		}
   }
 }
 uint32_t median5(uint32_t *buf)

@@ -16,12 +16,15 @@
 #include <engine_info.h>
 
 
+
 volatile uint32_t counter = 0;
+
 /////////////////////SETUP////////////////////////////
 void setup(){
 	HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_4);
+	__HAL_TIM_DISABLE_IT(&htim5, TIM_IT_CC1);
 	HAL_UART_Receive_IT(&huart1, &rx_char, 1);
-
+	HAL_TIM_OC_Start_IT(&htim5, TIM_CHANNEL_1);
 
 }
 //////////////////////////////////////////////////////

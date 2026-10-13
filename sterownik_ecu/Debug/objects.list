@@ -3,6 +3,7 @@
 "./Core/Src/ignition.o"
 "./Core/Src/main.o"
 "./Core/Src/main2.o"
+"./Core/Src/scheduler.o"
 "./Core/Src/stm32f4xx_hal_msp.o"
 "./Core/Src/stm32f4xx_it.o"
 "./Core/Src/syscalls.o"
